@@ -2,6 +2,8 @@ const Book = require("../models/Book.model");
 
 const router = require("express").Router();
 
+
+// READ: display list of books
 router.get("/books", (req, res, next) => {
     Book.find()
         .then((booksArr) => {
@@ -14,12 +16,15 @@ router.get("/books", (req, res, next) => {
 });
 
 
+// CREATE: render form
 router.get("/books/create", (req, res, next) => {
     res.render("books/book-create");
 })
 
+
+// CREATE: process form
 router.post("/books/create", (req, res, next) => {
-    
+
     const newBook = {
         title: req.body.title,
         description: req.body.description,
@@ -39,6 +44,7 @@ router.post("/books/create", (req, res, next) => {
 })
 
 
+// READ: display book details
 router.get("/books/:bookId", (req, res, next) => {
     const id = req.params.bookId;
 
@@ -52,6 +58,43 @@ router.get("/books/:bookId", (req, res, next) => {
         });
 })
 
+
+// UPDATE: display form
+router.get("/books/:bookId/edit", (req, res, next) => {
+    const id = req.params.bookId;
+    Book.findById(id)
+        .then((bookDetails) => {
+            res.render("books/book-edit", bookDetails);
+        })
+        .catch(err => {
+            console.log("error getting book details from DB", err)
+            next(err);
+        });
+});
+
+
+
+// UPDATE: process form
+router.post("/books/:bookId/edit", (req, res, next) => {
+
+    const id = req.params.bookId;
+
+    const newDetails = {
+        title: req.body.title,
+        description: req.body.description,
+        author: req.body.author,
+        rating: req.body.rating,
+    };
+
+    Book.findByIdAndUpdate(id, newDetails)
+        .then((bookFromDB) => {
+            res.redirect(`/books/${bookFromDB._id}`);
+        })
+        .catch(err => {
+            console.log("error updating book in DB", err)
+            next(err);
+        });
+});
 
 
 module.exports = router;
