@@ -1,4 +1,5 @@
 const Book = require("../models/Book.model");
+const Author = require("../models/Author.model");
 
 const router = require("express").Router();
 
@@ -6,6 +7,7 @@ const router = require("express").Router();
 // READ: display list of books
 router.get("/books", (req, res, next) => {
     Book.find()
+        .populate("author")
         .then((booksArr) => {
             res.render("books/books-list", { books: booksArr });
         })
