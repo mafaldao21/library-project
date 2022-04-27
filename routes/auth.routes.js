@@ -36,7 +36,7 @@ router.post("/register", (req, res, next) => {
             return User.create(userDetails)
         })
         .then( userFromDB => {
-            res.send("user was created") //@to-do: redirect to profile page
+            res.redirect("/login")
         })
         .catch( error => {
             console.log("error creating account", error);
@@ -69,7 +69,8 @@ router.post("/login", (req, res, next) => {
                 return;
             } else if (bcryptjs.compareSync(password, userFromDB.passwordHash)) {
                 //login sucessful
-                res.render('auth/user-profile', {user: userFromDB});
+                req.session.currentUser = userFromDB;
+                res.redirect("/user-profile");
             } else {
                 //login failed (password doesn't match)
                 res.render('auth/login', { errorMessage: 'Incorrect credentials.' });
@@ -84,7 +85,7 @@ router.post("/login", (req, res, next) => {
 
 //PROFILE PAGE
 router.get('/user-profile', (req, res, next) => {
-    res.render('auth/user-profile');
+    res.render('auth/user-profile', {user: req.session.currentUser});
 });
 
 
