@@ -17,6 +17,11 @@ form {
   margin: 1rem auto;
 }
 
+input, textarea, select {
+  display: block;
+  margin: 0.5rem 0 1rem;
+}
+
 header {
   text-align: center;
 }
