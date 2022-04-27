@@ -6,11 +6,12 @@ const User = require("../models/User.model");
 const saltRounds = 10;
 
 
+//REGISTRATION: display form
 router.get("/register", (req, res, next) => {
     res.render("auth/register");
 });
 
-
+//REGISTRATION: process form
 router.post("/register", (req, res, next) => {
     
     const { email, password } = req.body;
@@ -35,7 +36,7 @@ router.post("/register", (req, res, next) => {
             return User.create(userDetails)
         })
         .then( userFromDB => {
-            res.send("user was created")
+            res.send("user was created") //@to-do: redirect to profile page
         })
         .catch( error => {
             console.log("error creating account", error);
@@ -43,5 +44,48 @@ router.post("/register", (req, res, next) => {
         });
 
 });
+
+
+//LOGIN: display form
+router.get("/login", (req, res, next) => {
+    res.render("auth/login");
+})
+
+//LOGIN: process form
+router.post("/login", (req, res, next) => {
+
+    const {email, password} = req.body;
+
+    if( !email || !password){
+        res.render("auth/login", {errorMessage: "Please provide email and password"});
+        return;
+    }
+
+    User.findOne({email: email})
+        .then( userFromDB => {
+            if( !userFromDB ) {
+                //user doesn't exist
+                res.render('auth/login', { errorMessage: 'Incorrect credentials (no user with that email address).' });
+                return;
+            } else if (bcryptjs.compareSync(password, userFromDB.passwordHash)) {
+                //login sucessful
+                res.render('auth/user-profile', {user: userFromDB});
+            } else {
+                //login failed (password doesn't match)
+                res.render('auth/login', { errorMessage: 'Incorrect credentials.' });
+            }
+        })
+        .catch( error => {
+            console.log("Error getting user details from DB", error);
+            next(error);
+        });
+})
+
+
+//PROFILE PAGE
+router.get('/user-profile', (req, res, next) => {
+    res.render('auth/user-profile');
+});
+
 
 module.exports = router;
