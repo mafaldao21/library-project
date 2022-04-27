@@ -2,6 +2,12 @@
 
 <form action="/register" method="POST">
 
+    {{#if errorMessage}}
+        <p class="warning">
+            {{errorMessage}}
+        </p>
+    {{/if}}
+
     <label> Email
         <input type="email" name="email" placeholder="rockstar@ironhack.com" required />
     </label>
@@ -12,5 +18,4 @@
 
     <button type="submit">Create account</button>
 
-    {{!-- error message will be added here --}}
 </form>
