@@ -85,7 +85,7 @@ router.post("/login", (req, res, next) => {
 
 //PROFILE PAGE
 router.get('/user-profile', (req, res, next) => {
-    res.render('auth/user-profile', {user: req.session.currentUser});
+    res.render('auth/user-profile');
 });
 
 //LOGOUT
