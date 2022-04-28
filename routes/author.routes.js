@@ -2,6 +2,8 @@ const Author = require("../models/Author.model");
 
 const router = require("express").Router();
 
+const {isLoggedIn} = require("../middleware/route-guard");
+
 
 router.get("/", (req, res, next) => {
     Author.find()

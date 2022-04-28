@@ -3,6 +3,7 @@ const Author = require("../models/Author.model");
 
 const router = require("express").Router();
 
+const {isLoggedIn} = require("../middleware/route-guard");
 
 // READ: display list of books
 router.get("/", (req, res, next) => {
@@ -19,7 +20,7 @@ router.get("/", (req, res, next) => {
 
 
 // CREATE: render form
-router.get("/create", (req, res, next) => {
+router.get("/create", isLoggedIn, (req, res, next) => {
     Author.find()
         .then((authorsArr) => {
             res.render("books/book-create", {authors: authorsArr});
@@ -32,7 +33,7 @@ router.get("/create", (req, res, next) => {
 
 
 // CREATE: process form
-router.post("/create", (req, res, next) => {
+router.post("/create", isLoggedIn, (req, res, next) => {
 
     const newBook = {
         title: req.body.title,
@@ -69,7 +70,7 @@ router.get("/:bookId", (req, res, next) => {
 
 
 // UPDATE: display form
-router.get("/:bookId/edit", (req, res, next) => {
+router.get("/:bookId/edit", isLoggedIn, (req, res, next) => {
     const id = req.params.bookId;
     Book.findById(id)
         .then((bookDetails) => {
@@ -84,7 +85,7 @@ router.get("/:bookId/edit", (req, res, next) => {
 
 
 // UPDATE: process form
-router.post("/:bookId/edit", (req, res, next) => {
+router.post("/:bookId/edit", isLoggedIn, (req, res, next) => {
 
     const id = req.params.bookId;
 
@@ -108,7 +109,7 @@ router.post("/:bookId/edit", (req, res, next) => {
 
 
 // DELETE.
-router.post("/:bookId/delete", (req, res, next) => {
+router.post("/:bookId/delete", isLoggedIn, (req, res, next) => {
     const id = req.params.bookId;
     Book.findByIdAndRemove(id)
         .then(response => {
